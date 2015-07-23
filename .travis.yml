@@ -1,11 +1,13 @@
 language: python
 python: 3.4
+sudo: false
 
 env:
   - TOXENV=py26
   - TOXENV=py27
   - TOXENV=py33
   - TOXENV=py34
+  - TOXENV=pypy
   - TOXENV=pyparsing1
   - TOXENV=flask08
   - TOXENV=flask09
@@ -13,8 +15,10 @@ env:
   - TOXENV=lint
   - TOXENV=docs
 
-before_install:
-  - sudo apt-get -y install libcairo2-dev
+addons:
+  apt:
+    packages:
+      - libcairo2-dev
 
 install:
   - pip install tox
