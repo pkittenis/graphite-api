@@ -24,7 +24,7 @@ with open('README.rst') as f:
 
 setup(
     name='graphite-api',
-    version='1.0.1a',
+    version='1.0.2a',
     url='https://github.com/brutasse/graphite-api',
     author="Bruno Renié, based on Chris Davis's graphite-web",
     author_email='bruno@renie.fr',
