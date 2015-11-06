@@ -57,7 +57,7 @@ class TimeSeries(list):
             yield self.__consolidate(buf)
         else:
             yield None
-        raise StopIteration
+        return
 
     def __consolidate(self, values):
         usable = [v for v in values if v is not None]
@@ -87,19 +87,13 @@ class DataStore(object):
         self.paths = defaultdict(set)
         self.data = defaultdict(list)
 
-    def add_path(self, path_expr, path):
-        """
-        Adds the path to the pathExpression.
-        """
-        self.paths[path_expr].add(path)
-
     def get_paths(self, path_expr):
         """
         Returns all paths found for path_expr
         """
         return sorted(self.paths[path_expr])
 
-    def add_data(self, path, time_info, data):
+    def add_data(self, path, time_info, data, exprs):
         """
         Stores data before it can be put into a time series
         """
@@ -110,6 +104,8 @@ class DataStore(object):
                     return
 
         # Add data to path
+        for expr in exprs:
+            self.paths[expr].add(path)
         self.data[path].append({
             'time_info': time_info,
             'values': data
@@ -134,17 +130,20 @@ def fetchData(requestContext, pathExprs):
     # Convert to list if given single path
     if not isinstance(pathExprs, list):
         pathExprs = [pathExprs]
+    pathExprs = set(pathExprs)
 
     data_store = DataStore()
     multi_nodes = defaultdict(list)
     single_nodes = []
 
+    path_to_exprs = defaultdict(list)
+
     # Group nodes that support multiple fetches
     for pathExpr in pathExprs:
-        for node in app.store.find(pathExpr):
+        for node in app.store.find(pathExpr, startTime, endTime):
             if not node.is_leaf:
                 continue
-            data_store.add_path(pathExpr, node.path)
+            path_to_exprs[node.path].append(pathExpr)
             if hasattr(node, '__fetch_multi__'):
                 multi_nodes[node.__fetch_multi__].append(node)
             else:
@@ -159,7 +158,8 @@ def fetchData(requestContext, pathExprs):
             continue
         time_info, series = finder.fetch_multi(nodes, startTime, endTime)
         for path, values in series.items():
-            data_store.add_data(path, time_info, values)
+            data_store.add_data(path, time_info, values,
+                                path_to_exprs[node.path])
 
     # Single fetches
     fetches = [
@@ -175,7 +175,8 @@ def fetchData(requestContext, pathExprs):
         except ValueError as e:
             raise Exception("could not parse timeInfo/values from metric "
                             "'%s': %s" % (node.path, e))
-        data_store.add_data(node.path, time_info, values)
+        data_store.add_data(node.path, time_info, values,
+                            path_to_exprs[node.path])
 
     return data_store
 

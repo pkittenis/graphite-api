@@ -28,9 +28,11 @@ from .utils import RequestParams, hash_request
 logger = get_logger()
 
 
-def jsonify(data, status=200, jsonp=False, headers=None):
+def jsonify(data, status=200, headers=None):
     if headers is None:
         headers = {}
+
+    jsonp = RequestParams.get('jsonp', False)
 
     body = json.dumps(data, cls=JSONEncoder)
     if jsonp:
@@ -90,24 +92,6 @@ def events():
 
 
 # API calls that actually do something
-@app.route('/metrics/search', methods=methods)
-def metrics_search():
-    errors = {}
-    try:
-        max_results = int(RequestParams.get('max_results', 25))
-    except ValueError:
-        errors['max_results'] = 'must be an integer.'
-    if 'query' not in RequestParams:
-        errors['query'] = 'this parameter is required.'
-    if errors:
-        return jsonify({'errors': errors}, status=400)
-    results = sorted(app.searcher.search(
-        query=RequestParams['query'],
-        max_results=max_results,
-    ), key=lambda result: result['path'] or '')
-    return jsonify({'metrics': results})
-
-
 @app.route('/metrics', methods=methods)
 @app.route('/metrics/find', methods=methods)
 def metrics_find():
@@ -223,7 +207,7 @@ def metrics_index():
             recurse('*', index)
     else:
         recurse('*', index)
-    return jsonify(sorted(index), jsonp=RequestParams.get('jsonp', False))
+    return jsonify(sorted(index))
 
 
 def prune_datapoints(series, max_datapoints, start, end):
@@ -451,8 +435,7 @@ def render():
                     series_data.append({'target': series.name,
                                         'datapoints': datapoints})
 
-            return jsonify(series_data, headers=headers,
-                           jsonp=request_options.get('jsonp', False))
+            return jsonify(series_data, headers=headers)
 
         if request_options['format'] == 'raw':
             response = StringIO()
@@ -505,7 +488,7 @@ def pathsFromTokens(tokens):
         iters.extend([pathsFromTokens(kwarg.args[0])
                       for kwarg in tokens.call.kwargs])
     for path in itertools.chain(*iters):
-        yield(path)
+        yield path
 
 
 def evaluateTarget(requestContext, target, data_store):

@@ -1,16 +1,19 @@
 language: python
 python: 3.4
 sudo: false
+cache: pip
 
 env:
   - TOXENV=py26
   - TOXENV=py27
   - TOXENV=py33
   - TOXENV=py34
+  - TOXENV=py35
   - TOXENV=pypy
   - TOXENV=pyparsing1
   - TOXENV=flask08
   - TOXENV=flask09
+  - TOXENV=no-flask-cache
   - TOXENV=coverage
   - TOXENV=lint
   - TOXENV=docs
@@ -28,3 +31,4 @@ script: "./.travis.sh"
 matrix:
   allow_failures:
     - env: TOXENV=coverage
+    - env: TOXENV=py35
