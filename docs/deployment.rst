@@ -191,8 +191,8 @@ container::
 
     docker run -t -i -v /path/to/graphite:/srv/graphite -p 8888:8888 graphite-api
 
-This container has all the :ref:`extra packages <extras>` included. Cyanite
-backend and Sentry integration are available.
+This container has all the :ref:`extra packages <extras>` included. Cyanite,
+InfluxDB backends and Sentry integration are available.
 
 Nginx + uWSGI
 -------------

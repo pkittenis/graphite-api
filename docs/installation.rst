@@ -65,6 +65,8 @@ extra dependencies:
 
 * For `Cyanite`_ integration: ``pip install graphite-api[cyanite]``.
 
+* For `InfluxDB`_ integration: ``pip install graphite-api[influxgraph]``.
+
 * For Cache support: ``pip install graphite-api[cache]``. You'll also need the
   driver for the type of caching you want to use (Redis, Memcache, etc.). See
   the `Flask-Cache docs`_ for supported cache types.
@@ -72,6 +74,7 @@ extra dependencies:
 
 .. _Sentry: https://docs.getsentry.com
 .. _Cyanite: https://github.com/brutasse/graphite-cyanite
+.. _InfluxDB: https://www.influxdata.com
 .. _Flask-Cache docs: http://pythonhosted.org/Flask-Cache/#configuring-flask-cache
 
 You can also combine several extra dependencies::

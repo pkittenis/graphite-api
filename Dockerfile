@@ -17,7 +17,7 @@ RUN dpkg-reconfigure locales
 
 RUN apt-get install -y build-essential python-dev libffi-dev libcairo2-dev python-pip
 
-RUN pip install gunicorn graphite-api[sentry,cyanite]
+RUN pip install gunicorn graphite-api[sentry,cyanite,influxgraph]
 
 ONBUILD ADD graphite-api.yaml /etc/graphite-api.yaml
 ONBUILD RUN chmod 0644 /etc/graphite-api.yaml

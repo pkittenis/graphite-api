@@ -13,8 +13,8 @@ Graphite-API documentation
 
 Graphite-API is an alternative to Graphite-web, without any built-in
 dashboard. Its role is solely to fetch metrics from a time-series database
-(whisper, cyanite, etc.) and rendering graphs or JSON data out of these
-time series. It is meant to be consumed by any of the numerous Graphite
+(whisper, cyanite, influxdb, etc.) and rendering graphs or JSON data out of 
+these time series. It is meant to be consumed by any of the numerous Graphite
 dashboard applications.
 
 Graphite-API is a fork of Graphite-web and couldn't have existed without the
