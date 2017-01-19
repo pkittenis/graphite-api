@@ -42,6 +42,7 @@ setup(
         'cyanite': ['cyanite'],
         'cache': ['Flask-Cache'],
         'statsd': ['statsd'],
+        'influxgraph': ['influxgraph'],
     },
     zip_safe=False,
     platforms='any',
